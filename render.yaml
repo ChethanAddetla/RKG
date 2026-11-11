@@ -1,0 +1,42 @@
+# Render Blueprint: New > Blueprint > pick this repo.
+# Secrets (sync: false) are entered in the Render dashboard, never committed.
+services:
+  # ---- Backend API (Express) ----
+  - type: web
+    name: rkg-backend
+    runtime: node
+    rootDir: backend
+    plan: free            # free sleeps after idle; use "starter" so webhooks are never missed
+    buildCommand: npm install
+    startCommand: npm start
+    healthCheckPath: /api/health
+    envVars:
+      - key: NODE_VERSION
+        value: 20
+      - key: WHATSAPP_ACCESS_TOKEN
+        sync: false
+      - key: WHATSAPP_PHONE_NUMBER_ID
+        value: "1477889452064420"
+      - key: GRAPH_API_VERSION
+        value: v25.0
+      - key: DEFAULT_COUNTRY_CODE
+        value: "91"
+      - key: MONGODB_URI
+        sync: false
+      - key: MONGODB_DB
+        value: whatsapp_messenger
+      - key: WEBHOOK_VERIFY_TOKEN
+        sync: false
+      - key: CORS_ORIGIN       # set to the frontend's URL, e.g. https://rkg-frontend.onrender.com
+        sync: false
+
+  # ---- Frontend (static Vite build) ----
+  - type: web
+    name: rkg-frontend
+    runtime: static
+    rootDir: frontend
+    buildCommand: npm install && npm run build
+    staticPublishPath: dist
+    envVars:
+      - key: VITE_API_URL      # set to the backend's URL, e.g. https://rkg-backend.onrender.com
+        sync: false
