@@ -8,7 +8,7 @@ import MessageLogs from '../components/MessageLogs.jsx';
 import SendResults from '../components/SendResults.jsx';
 import { parseContactsCsv } from '../utils/csv.js';
 
-export default function Home() {
+export default function Home({ onLogout }) {
   const [tab, setTab] = useState('contacts');
   const [contacts, setContacts] = useState([]);
   const [selected, setSelected] = useState(new Set());
@@ -87,6 +87,7 @@ export default function Home() {
         <nav className="tabs">
           <button className={tab === 'contacts' ? 'active' : ''} onClick={() => setTab('contacts')}>Contacts &amp; Send</button>
           <button className={tab === 'history' ? 'active' : ''} onClick={() => setTab('history')}>History</button>
+          <button onClick={onLogout}>Log out</button>
         </nav>
       </header>
 

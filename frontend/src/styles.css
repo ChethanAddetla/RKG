@@ -57,5 +57,7 @@ td.details { max-width: 320px; word-break: break-word; color: var(--muted); font
 .pill.failed { background: var(--bad); color: var(--bad-b); }
 code { background: #eef1f3; padding: 1px 5px; border-radius: 4px; font-size: .85em; }
 .modal-backdrop { position: fixed; inset: 0; background: rgba(0,0,0,.45); display: grid; place-items: center; z-index: 50; padding: 16px; }
+.login-wrap { min-height: 100vh; display: grid; place-items: center; padding: 16px; }
+.login-card { width: 100%; max-width: 360px; }
 .modal { background: #fff; border-radius: 10px; padding: 20px; max-width: 420px; width: 100%; }
 .modal h3 { margin-top: 0; }

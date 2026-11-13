@@ -10,6 +10,13 @@ const env = {
     .map((o) => o.trim().replace(/\/$/, ''))
     .filter(Boolean),
   defaultCountryCode: (process.env.DEFAULT_COUNTRY_CODE || '91').replace(/\D/g, ''),
+  // Single-admin login. All three are required (the server refuses to start without them).
+  auth: {
+    username: process.env.ADMIN_USERNAME || '',
+    password: process.env.ADMIN_PASSWORD || '',
+    secret: process.env.AUTH_SECRET || '',
+    sessionHours: Number(process.env.SESSION_HOURS) || 12,
+  },
   mongo: {
     uri: process.env.MONGODB_URI || 'mongodb://127.0.0.1:27017',
     dbName: process.env.MONGODB_DB || 'whatsapp_messenger',

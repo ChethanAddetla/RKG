@@ -42,6 +42,9 @@ Docker: `docker compose up --build` (needs `backend/.env`; starts its own MongoD
 
 | Variable | Purpose |
 | --- | --- |
+| `ADMIN_USERNAME` / `ADMIN_PASSWORD` | Login for the web UI (**required**) |
+| `AUTH_SECRET` | Random string, 16+ chars, signs login tokens (**required**) |
+| `SESSION_HOURS` | Login lifetime, default 12 |
 | `MONGODB_URI` | MongoDB connection string (secret if it contains a password) |
 | `MONGODB_DB` | Database name, default `whatsapp_messenger` |
 | `WHATSAPP_ACCESS_TOKEN` | Bearer token (secret) |
@@ -81,7 +84,21 @@ While using Meta's test number, you can only message numbers on an allowed list:
 - Sending is sequential with a 200ms delay, max 50 recipients per request, one failure never stops the rest.
 - Phone numbers are stored as E.164 digits (e.g. `916302746267`); 10-digit numbers get `DEFAULT_COUNTRY_CODE`. Invalid and duplicate numbers are rejected (logic in `backend/src/utils/phone.js`, mirrored in `frontend/src/utils/phone.js`).
 
+## Login
+
+The UI and every `/api` route (except `/api/health` and `/api/auth/login`) require a login. The backend refuses to start unless `ADMIN_USERNAME`, `ADMIN_PASSWORD` and `AUTH_SECRET` are set. Login attempts are limited to 10 per 15 minutes per IP. The `/webhook` endpoint is not behind the login (Meta can't log in); it is protected by `WEBHOOK_VERIFY_TOKEN` and, if set, `WHATSAPP_APP_SECRET`.
+
 ## API and curl examples
+
+All `/api` endpoints below (except health) need a token:
+
+```bash
+TOKEN=$(curl -s -X POST http://localhost:5000/api/auth/login \
+  -H "Content-Type: application/json" \
+  -d '{"username":"admin","password":"YOUR_PASSWORD"}' | sed -E 's/.*"token":"([^"]+)".*/\1/')
+# then add:  -H "Authorization: Bearer $TOKEN"  to each request, e.g.
+curl http://localhost:5000/api/contacts -H "Authorization: Bearer $TOKEN"
+```
 
 ```bash
 # Health

@@ -28,10 +28,17 @@ app.post('/webhook', receiveWebhook);
 app.use(notFound);
 app.use(errorHandler);
 
+// Fail closed: never run an unauthenticated API by accident.
+if (!env.auth.username || !env.auth.password || env.auth.secret.length < 16) {
+  console.error('[auth] Set ADMIN_USERNAME, ADMIN_PASSWORD and AUTH_SECRET (16+ chars) in backend/.env');
+  process.exit(1);
+}
 try {
   await connectDb();
 } catch (err) {
   console.error(`[db] Could not connect to MongoDB (${err.message}). Check MONGODB_URI in backend/.env`);
   process.exit(1);
 }
+
+
 app.listen(env.port, () => console.log(`API listening on http://localhost:${env.port}`));
